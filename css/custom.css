@@ -1,0 +1,272 @@
+/* ==========================================================================
+   SchlaganfallFit - Barrierefreie Styles & Kontraste
+   Optimiert für Menschen mit Halbseitenlähmung, Seh- und Wahrnehmungseinschränkungen
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800;900&display=swap');
+
+:root {
+    --font-base-size: 20px;
+    --touch-target-min: 64px;
+    --brand-blue: #2563eb;
+    --brand-blue-dark: #1d4ed8;
+    --brand-blue-light: #eff6ff;
+    --accent-orange: #ea580c;
+    --accent-orange-light: #fff7ed;
+    --emergency-red: #dc2626;
+    --emergency-red-dark: #991b1b;
+}
+
+/* ==========================================================================
+   GRUNDSCHRIFT & DYNAMISCHE SCHRIFTGRÖSSEN (A / A+ / A++)
+   ========================================================================== */
+html {
+    font-size: var(--font-base-size);
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    line-height: 1.6;
+    -webkit-text-size-adjust: 100%;
+}
+
+html.font-size-normal {
+    --font-base-size: 20px;
+}
+
+html.font-size-large {
+    --font-base-size: 24px;
+}
+
+html.font-size-xlarge {
+    --font-base-size: 28px;
+}
+
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+    touch-action: manipulation; /* Verhindert Doppel-Tap-Zoom bei schnellem Tippen */
+}
+
+/* Große, deutliche Touch-Targets: mindestens 64px x 64px für einfache Bedienung */
+.btn-touch {
+    min-height: var(--touch-target-min);
+    min-width: var(--touch-target-min);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem 1.5rem;
+    font-weight: 700;
+    cursor: pointer;
+    border-radius: 1.25rem;
+    transition: transform 0.15s ease, background-color 0.15s ease, border-color 0.15s ease;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.btn-touch:active {
+    transform: scale(0.97);
+}
+
+.btn-touch:focus-visible {
+    outline: 4px solid #2563eb;
+    outline-offset: 4px;
+}
+
+/* ==========================================================================
+   HOHER KONTRAST MODUS (Gelb auf Schwarz für Sehbeeinträchtigungen)
+   ========================================================================== */
+body.high-contrast {
+    background-color: #000000 !important;
+    color: #ffff00 !important;
+}
+
+body.high-contrast header,
+body.high-contrast nav,
+body.high-contrast main,
+body.high-contrast footer,
+body.high-contrast section,
+body.high-contrast div,
+body.high-contrast article {
+    background-color: #000000 !important;
+    color: #ffff00 !important;
+    border-color: #ffff00 !important;
+}
+
+body.high-contrast .bg-white,
+body.high-contrast .bg-slate-50,
+body.high-contrast .bg-slate-100,
+body.high-contrast .bg-blue-50,
+body.high-contrast .bg-amber-50,
+body.high-contrast .bg-emerald-50,
+body.high-contrast .bg-rose-50 {
+    background-color: #111111 !important;
+    border: 2px solid #ffff00 !important;
+}
+
+body.high-contrast text,
+body.high-contrast p,
+body.high-contrast span,
+body.high-contrast h1,
+body.high-contrast h2,
+body.high-contrast h3,
+body.high-contrast h4,
+body.high-contrast strong,
+body.high-contrast label {
+    color: #ffff00 !important;
+}
+
+body.high-contrast button {
+    background-color: #000000 !important;
+    color: #ffff00 !important;
+    border: 3px solid #ffff00 !important;
+}
+
+body.high-contrast button.active,
+body.high-contrast .nav-tab-btn.active,
+body.high-contrast button:hover,
+body.high-contrast .btn-primary {
+    background-color: #ffff00 !important;
+    color: #000000 !important;
+    font-weight: 900 !important;
+}
+
+body.high-contrast .border-slate-200,
+body.high-contrast .border-slate-100,
+body.high-contrast .border-blue-100 {
+    border-color: #ffff00 !important;
+}
+
+body.high-contrast svg {
+    color: #ffff00 !important;
+    stroke: #ffff00 !important;
+}
+
+body.high-contrast .btn-primary svg,
+body.high-contrast button.active svg {
+    stroke: #000000 !important;
+    color: #000000 !important;
+}
+
+body.high-contrast .emergency-banner {
+    background-color: #ff0000 !important;
+    color: #ffffff !important;
+    border: 4px solid #ffff00 !important;
+}
+
+body.high-contrast .emergency-banner * {
+    color: #ffffff !important;
+    border-color: #ffffff !important;
+}
+
+/* ==========================================================================
+   TIMER CIRCLE (Runder Fortschrittsbalken)
+   ========================================================================== */
+.timer-circle {
+    transition: stroke-dashoffset 1s linear, stroke 0.3s ease;
+    transform: rotate(-90deg);
+    transform-origin: 50% 50%;
+}
+
+/* ==========================================================================
+   ANGEHÖRIGEN-MODUS (Spezielle Hervorhebungen)
+   ========================================================================== */
+.caregiver-info {
+    border-left: 6px solid #8b5cf6;
+    background-color: #f5f3ff;
+}
+
+body.high-contrast .caregiver-info {
+    border-left: 6px solid #ffff00 !important;
+    background-color: #1a1a1a !important;
+}
+
+/* ==========================================================================
+   ACCESSIBILITY & REDUZIERTE BEWEGUNG
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+    *, ::before, ::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* Feste Mindestgröße für Piktogramme */
+.pictogram-box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 180px;
+    max-height: 240px;
+    background-color: #eff6ff;
+    border-radius: 1.5rem;
+    padding: 1rem;
+    overflow: hidden;
+}
+
+body.high-contrast .pictogram-box {
+    background-color: #111111 !important;
+    border: 2px solid #ffff00 !important;
+}
+
+/* ==========================================================================
+   DRUCKANSICHT (@media print)
+   Optimiert für Drucker: Weißer Hintergrund, Schwarzweiß, große Schrift
+   ========================================================================== */
+@media print {
+    header,
+    nav,
+    footer,
+    #mobile-nav,
+    .no-print,
+    #mute-toggle-btn,
+    #contrast-toggle-btn,
+    #font-size-controls,
+    #tts-speed-controls,
+    .tts-read-btn,
+    #exercise-player-modal,
+    #onboarding-modal {
+        display: none !important;
+    }
+
+    body, main, section, div, p, span, h1, h2, h3 {
+        background: transparent !important;
+        color: #000000 !important;
+        font-size: 16pt !important;
+        line-height: 1.4 !important;
+        box-shadow: none !important;
+    }
+
+    .print-only {
+        display: block !important;
+    }
+
+    .page-break {
+        page-break-before: always;
+    }
+
+    .print-card {
+        border: 2px solid #000000 !important;
+        border-radius: 12px !important;
+        padding: 16px !important;
+        margin-bottom: 20px !important;
+        page-break-inside: avoid;
+    }
+
+    .checkbox-box {
+        display: inline-block;
+        width: 26px;
+        height: 26px;
+        border: 2px solid #000000;
+        border-radius: 4px;
+        margin-right: 12px;
+        vertical-align: middle;
+    }
+}
+
+/* Verstecke Druck-Elemente am Bildschirm */
+.print-only {
+    display: none;
+}

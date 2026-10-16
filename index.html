@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="de" class="h-full bg-slate-50 font-size-normal">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>SchlaganfallFit – Dein Übungsbegleiter nach dem Schlaganfall</title>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        blue: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            800: '#1e40af',
+                            900: '#1e3a8a',
+                        },
+                        amber: {
+                            500: '#f59e0b',
+                            600: '#d97706',
+                        },
+                        rose: {
+                            600: '#e11d48',
+                            700: '#be123c',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/custom.css">
+
+    <!-- PWA & Mobile Metadaten -->
+    <meta name="theme-color" content="#2563eb">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="SchlaganfallFit">
+    <link rel="icon" type="image/svg+xml" href="icons/icon.svg">
+    <link rel="apple-touch-icon" href="icons/icon.svg">
+    <link rel="manifest" href="manifest.json">
+</head>
+<body class="h-full flex flex-col text-slate-800 antialiased selection:bg-blue-600 selection:text-white pb-24 md:pb-8">
+
+    <!-- ========================================================================= -->
+    <!-- HEADER MIT BARRIEREFREIHEIT-TOOLBAR -->
+    <!-- ========================================================================= -->
+    <header class="sticky top-0 z-30 bg-white/95 backdrop-blur border-b-2 border-slate-200 shadow-xs">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                
+                <!-- Logo & Brand -->
+                <div class="flex items-center gap-3 cursor-pointer" onclick="app.switchTab('start')">
+                    <div class="w-12 h-12 rounded-2xl bg-blue-600 text-white flex items-center justify-center shadow-md shadow-blue-600/30">
+                        <svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-xl sm:text-2xl font-black tracking-tight text-slate-900">SchlaganfallFit</span>
+                            <span class="hidden sm:inline-block px-2.5 py-0.5 text-xs font-bold uppercase tracking-wider bg-blue-100 text-blue-800 rounded-full">Reha-Begleiter</span>
+                        </div>
+                        <p class="text-xs sm:text-sm text-slate-500 hidden md:block">Sanfte Übungen & Sicherheit für jeden Tag</p>
+                    </div>
+                </div>
+
+                <!-- Desktop Navigation Tabs -->
+                <nav class="hidden lg:flex items-center gap-1 bg-slate-100 p-1.5 rounded-2xl border border-slate-200">
+                    <button onclick="app.switchTab('start')" data-tab="start" class="nav-tab-btn btn-touch active px-4 py-2 rounded-xl text-sm font-bold transition-all bg-blue-600 text-white">
+                        Start
+                    </button>
+                    <button onclick="app.switchTab('arm-hand')" data-tab="arm-hand" class="nav-tab-btn btn-touch px-4 py-2 rounded-xl text-sm font-bold transition-all text-slate-700 hover:bg-slate-200">
+                        Arm & Hand
+                    </button>
+                    <button onclick="app.switchTab('legs-balance')" data-tab="legs-balance" class="nav-tab-btn btn-touch px-4 py-2 rounded-xl text-sm font-bold transition-all text-slate-700 hover:bg-slate-200">
+                        Beine & Stehen
+                    </button>
+                    <button onclick="app.switchTab('face-speech')" data-tab="face-speech" class="nav-tab-btn btn-touch px-4 py-2 rounded-xl text-sm font-bold transition-all text-slate-700 hover:bg-slate-200">
+                        Gesicht & Sprechen
+                    </button>
+                    <button onclick="app.switchTab('brain')" data-tab="brain" class="nav-tab-btn btn-touch px-4 py-2 rounded-xl text-sm font-bold transition-all text-slate-700 hover:bg-slate-200">
+                        Kopf-Training
+                    </button>
+                    <button onclick="app.switchTab('faq')" data-tab="faq" class="nav-tab-btn btn-touch px-4 py-2 rounded-xl text-sm font-bold transition-all text-slate-700 hover:bg-slate-200">
+                        Ratgeber
+                    </button>
+                    <button onclick="app.switchTab('diary')" data-tab="diary" class="nav-tab-btn btn-touch px-4 py-2 rounded-xl text-sm font-bold transition-all text-slate-700 hover:bg-slate-200">
+                        Tagebuch
+                    </button>
+                </nav>
+
+                <!-- Barrierefreiheit-Toolbar (Schrift, Kontrast, Ton, Vorlesen, Drucken) -->
+                <div class="flex items-center gap-2">
+                    <!-- Schriftgröße Schalter -->
+                    <div class="flex items-center bg-slate-100 rounded-xl p-1 border border-slate-200" title="Schriftgröße wählen">
+                        <button id="btn-font-normal" onclick="app.setFontSize('normal')" class="px-2.5 py-1.5 rounded-lg text-xs font-black bg-blue-600 text-white">A</button>
+                        <button id="btn-font-large" onclick="app.setFontSize('large')" class="px-2.5 py-1.5 rounded-lg text-sm font-black text-slate-700">A+</button>
+                        <button id="btn-font-xlarge" onclick="app.setFontSize('xlarge')" class="px-2.5 py-1.5 rounded-lg text-base font-black text-slate-700">A++</button>
+                    </div>
+
+                    <!-- Hoher Kontrast Schalter -->
+                    <button id="contrast-toggle-btn" onclick="app.toggleHighContrast()" class="btn-touch p-2.5 rounded-xl border border-slate-200 hover:bg-slate-100 text-slate-700" title="Hoher Kontrast (Gelb/Schwarz) an/aus">
+                        <span class="text-sm font-bold">🌓 Kontrast</span>
+                    </button>
+
+                    <!-- Ton Stummschaltung -->
+                    <button id="mute-toggle-btn" onclick="const m = appAudio.toggleMute(); this.classList.toggle('bg-rose-100', m); this.classList.toggle('text-rose-700', m);" class="btn-touch p-2.5 rounded-xl border border-slate-200 hover:bg-slate-100 text-slate-700" title="Signalton an/aus">
+                        <span class="text-lg">🔊</span>
+                    </button>
+
+                    <!-- Angehörigen-Modus Toggle -->
+                    <label class="hidden xl:flex items-center gap-2 cursor-pointer bg-purple-50 hover:bg-purple-100 text-purple-900 border border-purple-200 px-3 py-2 rounded-xl text-xs font-bold" title="Zusätzliche Tipps für Begleitpersonen anzeigen">
+                        <input type="checkbox" id="caregiver-mode-toggle" onchange="app.toggleCaregiverMode()" class="w-4 h-4 text-purple-600 rounded">
+                        <span>Begleitperson</span>
+                    </label>
+
+                    <!-- Drucken -->
+                    <button onclick="window.print()" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-700 bg-white border border-slate-200 hover:bg-slate-50 shadow-xs" title="Übungsplan & Tagebuch drucken">
+                        🖨️ Drucken
+                    </button>
+
+                    <!-- Profil anpassen -->
+                    <button onclick="app.openOnboardingModal()" class="btn-touch p-2.5 rounded-xl border border-slate-200 hover:bg-slate-100 text-slate-700" title="Ersteinrichtung / Einstellungen erneut öffnen">
+                        ⚙️
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- ========================================================================= -->
+    <!-- MAIN CONTENT CONTAINER -->
+    <!-- ========================================================================= -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+        <!-- ===================================================================== -->
+        <!-- TAB 1: START / ÜBERSICHT -->
+        <!-- ===================================================================== -->
+        <section id="tab-start" class="tab-content space-y-8">
+            
+            <!-- Hero Banner -->
+            <div class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-blue-700 via-blue-800 to-slate-900 text-white p-6 sm:p-10 shadow-xl shadow-blue-900/10">
+                <div class="relative z-10 max-w-3xl">
+                    <div class="flex flex-wrap items-center gap-2 mb-3">
+                        <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold bg-blue-500/30 text-blue-200 border border-blue-400/30 backdrop-blur">
+                            <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
+                            Schlaganfall-Rehabilitation zu Hause
+                        </span>
+                        <span id="user-profile-badge" class="px-3 py-1 rounded-full text-xs font-extrabold bg-white/20 text-white backdrop-blur">
+                            Linke Körperseite
+                        </span>
+                    </div>
+
+                    <h1 class="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-white mb-3">
+                        Willkommen zurück! Schön, dass Sie heute üben.
+                    </h1>
+                    <p class="text-base sm:text-xl text-blue-100 leading-relaxed mb-6">
+                        Jeder Schritt, jede Bewegung zählt. Nehmen Sie sich Zeit. Kein Druck, keine Hektik.
+                    </p>
+
+                    <div class="flex flex-wrap items-center gap-4">
+                        <button onclick="app.startWorkout(app.getPersonalizedDailyPlan())" class="btn-touch px-8 py-4 bg-white text-blue-800 hover:bg-blue-50 rounded-2xl text-lg sm:text-xl font-black shadow-lg shadow-black/10 flex items-center gap-3">
+                            <span class="text-2xl">▶</span> Jetzt Tagesplan starten
+                        </button>
+                        <button onclick="appAudio.speak('Herzlich willkommen bei SchlaganfallFit. Wählen Sie Ihren heutigen Trainingsplan aus.')" class="btn-touch px-4 py-3 bg-blue-600/60 hover:bg-blue-600 text-white rounded-2xl text-sm font-bold flex items-center gap-2">
+                            🔊 Vorlesen
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ================================================================= -->
+            <!-- WARNHINWEIS NOTFALL (BE-FAST REGEL) -->
+            <!-- ================================================================= -->
+            <div class="emergency-banner rounded-3xl bg-rose-600 text-white p-6 sm:p-8 shadow-xl border-4 border-rose-700">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-6">
+                    <div class="space-y-1">
+                        <div class="flex items-center gap-2">
+                            <span class="text-2xl">🚨</span>
+                            <span class="text-xs font-black uppercase tracking-widest bg-rose-900/60 text-rose-100 px-3 py-1 rounded-full">Lebensgefahr</span>
+                        </div>
+                        <h2 class="text-2xl sm:text-3xl font-black">Notfall? Sofort 112 oder 144 anrufen!</h2>
+                        <p class="text-sm sm:text-base text-rose-100">
+                            Bei diesen plötzlichen Anzeichen zählt jede einzelne Minute. Zögern Sie nicht:
+                        </p>
+                    </div>
+
+                    <!-- Riesige Notruf-Tasten -->
+                    <div class="flex flex-wrap items-center gap-3">
+                        <a href="tel:112" class="btn-touch px-6 py-4 bg-white text-rose-700 hover:bg-rose-50 rounded-2xl text-xl font-black shadow-lg flex items-center gap-2">
+                            📞 112 anrufen
+                        </a>
+                        <a href="tel:144" class="btn-touch px-6 py-4 bg-rose-900 text-white hover:bg-rose-950 rounded-2xl text-xl font-black shadow-lg flex items-center gap-2">
+                            📞 144 anrufen (Ö/CH)
+                        </a>
+                    </div>
+                </div>
+
+                <!-- BE-FAST Bildkarten -->
+                <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 text-center">
+                    <div class="bg-rose-700/70 p-3.5 rounded-2xl border border-rose-500/50">
+                        <span class="text-2xl block mb-1">⚖️</span>
+                        <strong class="text-lg font-black block">B – Balance</strong>
+                        <span class="text-xs text-rose-100">Plötzlicher Schwindel, Gangunsicherheit</span>
+                    </div>
+                    <div class="bg-rose-700/70 p-3.5 rounded-2xl border border-rose-500/50">
+                        <span class="text-2xl block mb-1">👁️</span>
+                        <strong class="text-lg font-black block">E – Eyes</strong>
+                        <span class="text-xs text-rose-100">Sehstörung, Doppelbilder, Gesichtsfeldausfall</span>
+                    </div>
+                    <div class="bg-rose-700/70 p-3.5 rounded-2xl border border-rose-500/50">
+                        <span class="text-2xl block mb-1">🙂</span>
+                        <strong class="text-lg font-black block">F – Face</strong>
+                        <span class="text-xs text-rose-100">Hängender Mundwinkel, schiefes Gesicht</span>
+                    </div>
+                    <div class="bg-rose-700/70 p-3.5 rounded-2xl border border-rose-500/50">
+                        <span class="text-2xl block mb-1">💪</span>
+                        <strong class="text-lg font-black block">A – Arms</strong>
+                        <span class="text-xs text-rose-100">Lähmung oder Taubheit im Arm oder Bein</span>
+                    </div>
+                    <div class="bg-rose-700/70 p-3.5 rounded-2xl border border-rose-500/50">
+                        <span class="text-2xl block mb-1">🗣️</span>
+                        <strong class="text-lg font-black block">S – Speech</strong>
+                        <span class="text-xs text-rose-100">Verwaschene Sprache, Wortfindungsstörung</span>
+                    </div>
+                    <div class="bg-rose-700/70 p-3.5 rounded-2xl border border-rose-500/50">
+                        <span class="text-2xl block mb-1">⏱️</span>
+                        <strong class="text-lg font-black block">T – Time</strong>
+                        <span class="text-xs text-rose-100">Sofort Notruf wählen! Keine Minute warten.</span>
+                    </div>
+                </div>
+
+                <!-- Abbruchregeln beim Üben -->
+                <div class="mt-4 pt-4 border-t border-rose-500/60 flex flex-wrap items-center justify-between text-xs sm:text-sm text-rose-100">
+                    <span>🛑 <strong>Abbruch beim Üben:</strong> Sofort stoppen bei Schmerzen, Engegefühl in der Brust, Atemnot oder starkem Schwindel!</span>
+                    <button onclick="appAudio.speak('Notfallhinweis: Wenn Schwindel, Schmerzen, Atemnot oder eine Lähmung auftritt, beenden Sie die Übung sofort und rufen Sie den Notruf.')" class="underline hover:text-white font-bold ml-auto mt-1 sm:mt-0">
+                        🔊 Warnung vorlesen
+                    </button>
+                </div>
+            </div>
+
+            <!-- ================================================================= -->
+            <!-- HEUTIGER TAGESPLAN -->
+            <!-- ================================================================= -->
+            <div class="bg-white rounded-3xl p-6 sm:p-8 border-2 border-slate-200/80 shadow-xs">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+                    <div>
+                        <span class="text-xs font-bold uppercase tracking-wider text-blue-600 block mb-1">Ihr persönlicher Plan</span>
+                        <h2 class="text-2xl sm:text-3xl font-black text-slate-900">Heutiger 10-Minuten-Tagesplan</h2>
+                        <p class="text-sm text-slate-500">Automatisch abgestimmt auf Ihre Beweglichkeit und Sicherheit</p>
+                    </div>
+                    <button onclick="app.startWorkout(app.getPersonalizedDailyPlan())" class="btn-touch px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl text-base font-bold shadow-md shadow-blue-600/20">
+                        ▶ Alle 3 nacheinander starten
+                    </button>
+                </div>
+
+                <!-- Liste der Tagesübungen -->
+                <div class="space-y-4" id="daily-plan-list">
+                    <!-- Dynamisch per JS befüllt -->
+                </div>
+            </div>
+
+            <!-- ================================================================= -->
+            <!-- WOCHEN-STREAK (FORTSCHRITT) -->
+            <!-- ================================================================= -->
+            <div class="bg-white rounded-3xl p-6 sm:p-8 border-2 border-slate-200/80 shadow-xs">
+                <div class="flex items-center justify-between mb-4">
+                    <div>
+                        <h3 class="text-xl font-bold text-slate-900">Ihr Wochenfortschritt</h3>
+                        <p class="text-xs text-slate-500">Jeder Tag mit Übung oder Tagebucheintrag erhält einen Stern</p>
+                    </div>
+                </div>
+                <div class="grid grid-cols-7 gap-2 sm:gap-4" id="weekly-streak-container">
+                    <!-- Dynamisch per JS befüllt -->
+                </div>
+            </div>
+        </section>
+
+        <!-- ===================================================================== -->
+        <!-- TAB 2: ARM & HAND -->
+        <!-- ===================================================================== -->
+        <section id="tab-arm-hand" class="tab-content hidden space-y-6">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-3xl border-2 border-slate-200/80">
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-wider text-blue-600 block mb-1">Rehabilitation</span>
+                    <h2 class="text-2xl sm:text-3xl font-black text-slate-900">Arm & Hand</h2>
+                    <p class="text-sm text-slate-500">Sanfte Mobilisation, Greifen und Entspannen der Finger</p>
+                </div>
+                <button onclick="app.startCategoryWorkout('arm-hand')" class="btn-touch px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl text-base font-bold shadow-md shadow-blue-600/20">
+                    ▶ Alle Arm-Übungen starten
+                </button>
+            </div>
+
+            <!-- Wichtiger Begleitpersonen-Hinweis Schulter -->
+            <div class="caregiver-info p-5 rounded-3xl text-sm text-purple-900 leading-relaxed border-2 border-purple-200">
+                <strong class="text-base font-black flex items-center gap-2 mb-1">
+                    <span>⚠️</span> Wichtigster Hinweis für Arm & Schulter:
+                </strong>
+                Niemals den betroffenen Arm mit Schwung hochziehen oder am Arm anfassen, um beim Aufstehen zu helfen! Die Muskeln der Schulter sind oft geschwächt. Greifen Sie immer am Becken oder unter dem Schulterblatt.
+            </div>
+
+            <!-- Grid aller Arm-Übungen -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="arm-exercises-grid">
+                <!-- Dynamisch per JS befüllt -->
+            </div>
+        </section>
+
+        <!-- ===================================================================== -->
+        <!-- TAB 3: BEINE & GLEICHGEWICHT -->
+        <!-- ===================================================================== -->
+        <section id="tab-legs-balance" class="tab-content hidden space-y-6">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-3xl border-2 border-slate-200/80">
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-wider text-blue-600 block mb-1">Rehabilitation</span>
+                    <h2 class="text-2xl sm:text-3xl font-black text-slate-900">Beine & Gleichgewicht</h2>
+                    <p class="text-sm text-slate-500">Sicherheit zuerst: erst im Sitzen, dann mit stabilem Stuhlhalt</p>
+                </div>
+                <button onclick="app.startCategoryWorkout('legs-balance')" class="btn-touch px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl text-base font-bold shadow-md shadow-blue-600/20">
+                    ▶ Alle Bein-Übungen starten
+                </button>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="legs-exercises-grid">
+                <!-- Dynamisch per JS befüllt -->
+            </div>
+        </section>
+
+        <!-- ===================================================================== -->
+        <!-- TAB 4: GESICHT & SPRECHEN -->
+        <!-- ===================================================================== -->
+        <section id="tab-face-speech" class="tab-content hidden space-y-6">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-3xl border-2 border-slate-200/80">
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-wider text-blue-600 block mb-1">Logopädie & Mimik</span>
+                    <h2 class="text-2xl sm:text-3xl font-black text-slate-900">Gesicht & Sprechen</h2>
+                    <p class="text-sm text-slate-500">Mundmotorik, Atmung, Vokale und einfache Wörter im Takt</p>
+                </div>
+                <button onclick="app.startCategoryWorkout('face-speech')" class="btn-touch px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl text-base font-bold shadow-md shadow-blue-600/20">
+                    ▶ Alle Sprech-Übungen starten
+                </button>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="face-exercises-grid">
+                <!-- Dynamisch per JS befüllt -->
+            </div>
+        </section>
+
+        <!-- ===================================================================== -->
+        <!-- TAB 5: KOPF-TRAINING (KOGNITIVE SPIELE) -->
+        <!-- ===================================================================== -->
+        <section id="tab-brain" class="tab-content hidden space-y-6">
+            <div class="bg-white p-6 sm:p-8 rounded-3xl border-2 border-slate-200/80">
+                <div class="max-w-2xl">
+                    <span class="text-xs font-bold uppercase tracking-wider text-blue-600 block mb-1">Geistige Fitness</span>
+                    <h2 class="text-2xl sm:text-3xl font-black text-slate-900">Kopf-Training ohne Zeitdruck</h2>
+                    <p class="text-sm sm:text-base text-slate-600 mt-1">
+                        Spielerische Gedächtnis- und Konzentrationsübungen. Hier läuft kein Timer ab. Sie können sich so viel Zeit lassen, wie Sie möchten!
+                    </p>
+                </div>
+
+                <!-- Spiel-Auswahl -->
+                <div class="flex flex-wrap gap-2 mt-6">
+                    <button id="brain-game-tab-numbers" onclick="app.initBrainGame('numbers')" class="btn-touch px-5 py-2.5 rounded-xl font-bold bg-blue-600 text-white">
+                        1️⃣ Zahlen der Reihe nach
+                    </button>
+                    <button id="brain-game-tab-shapes" onclick="app.initBrainGame('shapes')" class="btn-touch px-5 py-2.5 rounded-xl font-bold bg-slate-100 text-slate-700">
+                        ☀️ Symbole erkennen
+                    </button>
+                    <button id="brain-game-tab-memory" onclick="app.initBrainGame('memory')" class="btn-touch px-5 py-2.5 rounded-xl font-bold bg-slate-100 text-slate-700">
+                        🃏 Bildpaare-Merkspiel
+                    </button>
+                </div>
+            </div>
+
+            <!-- Spielfeld Container -->
+            <div class="bg-white p-6 sm:p-10 rounded-3xl border-2 border-slate-200/80 min-h-[380px] flex items-center justify-center" id="brain-game-container">
+                <!-- Dynamisch befüllt -->
+            </div>
+        </section>
+
+        <!-- ===================================================================== -->
+        <!-- TAB 6: FRAGEN & ANTWORTEN (RATGEBER) -->
+        <!-- ===================================================================== -->
+        <section id="tab-faq" class="tab-content hidden space-y-6">
+            <div class="bg-white p-6 sm:p-8 rounded-3xl border-2 border-slate-200/80">
+                <div class="max-w-2xl mb-6">
+                    <span class="text-xs font-bold uppercase tracking-wider text-blue-600 block mb-1">Wissensberater</span>
+                    <h2 class="text-2xl sm:text-3xl font-black text-slate-900">Fragen & Antworten</h2>
+                    <p class="text-sm sm:text-base text-slate-600 mt-1">
+                        Verlässliche Antworten auf die wichtigsten Alltagsfragen nach dem Schlaganfall. Regelbasiert, werbefrei und vollständig offline.
+                    </p>
+                </div>
+
+                <!-- Suchfeld -->
+                <div class="relative max-w-xl">
+                    <input type="text" id="faq-search-input" placeholder="Suchbegriff eingeben (z. B. Spastik, Müdigkeit, Schulter)..." class="w-full px-5 py-4 pl-12 rounded-2xl border-2 border-slate-200 focus:border-blue-500 focus:outline-none text-base">
+                    <span class="absolute left-4 top-4 text-xl text-slate-400">🔍</span>
+                </div>
+            </div>
+
+            <!-- FAQ Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="faq-container">
+                <!-- Dynamisch per JS befüllt -->
+            </div>
+        </section>
+
+        <!-- ===================================================================== -->
+        <!-- TAB 7: REHA-TAGEBUCH -->
+        <!-- ===================================================================== -->
+        <section id="tab-diary" class="tab-content hidden space-y-8">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 sm:p-8 rounded-3xl border-2 border-slate-200/80">
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-wider text-blue-600 block mb-1">Verlaufskontrolle</span>
+                    <h2 class="text-2xl sm:text-3xl font-black text-slate-900">Reha-Tagebuch</h2>
+                    <p class="text-sm text-slate-500">Halten Sie Stimmung, Müdigkeit und Erfolge für sich und Ihren Therapeuten fest</p>
+                </div>
+                <button onclick="window.print()" class="btn-touch px-6 py-3 bg-white border-2 border-slate-300 hover:bg-slate-50 text-slate-800 rounded-2xl text-base font-bold shadow-xs flex items-center gap-2">
+                    🖨️ Für Arzt / Therapeut drucken
+                </button>
+            </div>
+
+            <!-- Neuer Eintrag Formular -->
+            <div class="bg-white rounded-3xl p-6 sm:p-8 border-2 border-slate-200/80 shadow-xs space-y-6">
+                <h3 class="text-xl font-bold text-slate-900">Neuen Tagebucheintrag festhalten</h3>
+                
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-bold text-slate-700 mb-2">Datum</label>
+                        <input type="date" id="diary-date-input" class="w-full p-3.5 rounded-xl border-2 border-slate-200 focus:border-blue-500 font-bold">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-bold text-slate-700 mb-2">Wie müde fühlen Sie sich?</label>
+                        <div class="flex gap-2">
+                            <label class="flex-1 text-center p-3 rounded-xl border-2 border-slate-200 cursor-pointer has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50">
+                                <input type="radio" name="diary-fatigue" value="wenig" class="sr-only">
+                                <span class="text-xs font-bold block">Wenig</span>
+                            </label>
+                            <label class="flex-1 text-center p-3 rounded-xl border-2 border-slate-200 cursor-pointer has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50">
+                                <input type="radio" name="diary-fatigue" value="mittel" checked class="sr-only">
+                                <span class="text-xs font-bold block">Mittel</span>
+                            </label>
+                            <label class="flex-1 text-center p-3 rounded-xl border-2 border-slate-200 cursor-pointer has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50">
+                                <input type="radio" name="diary-fatigue" value="stark" class="sr-only">
+                                <span class="text-xs font-bold block">Stark</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Stimmung Smileys -->
+                <div>
+                    <label class="block text-sm font-bold text-slate-700 mb-2">Wie ist Ihre heutige Stimmung?</label>
+                    <div class="grid grid-cols-5 gap-2 sm:gap-4 max-w-md">
+                        <label class="text-center p-3 rounded-2xl border-2 border-slate-200 cursor-pointer has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50">
+                            <input type="radio" name="diary-mood" value="1" class="sr-only">
+                            <span class="text-3xl block">😢</span>
+                            <span class="text-[10px] sm:text-xs font-bold text-slate-600">Schlecht</span>
+                        </label>
+                        <label class="text-center p-3 rounded-2xl border-2 border-slate-200 cursor-pointer has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50">
+                            <input type="radio" name="diary-mood" value="2" class="sr-only">
+                            <span class="text-3xl block">😐</span>
+                            <span class="text-[10px] sm:text-xs font-bold text-slate-600">Mäßig</span>
+                        </label>
+                        <label class="text-center p-3 rounded-2xl border-2 border-slate-200 cursor-pointer has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50">
+                            <input type="radio" name="diary-mood" value="3" checked class="sr-only">
+                            <span class="text-3xl block">🙂</span>
+                            <span class="text-[10px] sm:text-xs font-bold text-slate-600">Geht so</span>
+                        </label>
+                        <label class="text-center p-3 rounded-2xl border-2 border-slate-200 cursor-pointer has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50">
+                            <input type="radio" name="diary-mood" value="4" class="sr-only">
+                            <span class="text-3xl block">😊</span>
+                            <span class="text-[10px] sm:text-xs font-bold text-slate-600">Gut</span>
+                        </label>
+                        <label class="text-center p-3 rounded-2xl border-2 border-slate-200 cursor-pointer has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50">
+                            <input type="radio" name="diary-mood" value="5" class="sr-only">
+                            <span class="text-3xl block">🌟</span>
+                            <span class="text-[10px] sm:text-xs font-bold text-slate-600">Klasse</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Notizen -->
+                <div>
+                    <label class="block text-sm font-bold text-slate-700 mb-2">Persönliche Notiz (optional)</label>
+                    <input type="text" id="diary-notes-input" placeholder="z. B. Konnte heute den Becher 5 Sekunden sicher halten..." class="w-full p-4 rounded-xl border-2 border-slate-200 focus:border-blue-500 text-sm">
+                </div>
+
+                <button onclick="app.addDiaryEntryFromForm()" class="btn-touch px-8 py-3.5 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl text-base font-bold shadow-md shadow-blue-600/20">
+                    💾 Eintrag speichern
+                </button>
+            </div>
+
+            <!-- SVG Verlaufsdiagramm -->
+            <div class="bg-white rounded-3xl p-6 sm:p-8 border-2 border-slate-200/80 shadow-xs">
+                <h3 class="text-xl font-bold text-slate-900 mb-2">Stimmungsverlauf der letzten Tage</h3>
+                <div id="diary-chart-container">
+                    <!-- Dynamisch per JS gezeichnet -->
+                </div>
+            </div>
+
+            <!-- Bisherige Einträge Liste -->
+            <div class="space-y-4">
+                <h3 class="text-xl font-bold text-slate-900">Bisherige Einträge</h3>
+                <div class="space-y-3" id="diary-history-list">
+                    <!-- Dynamisch per JS befüllt -->
+                </div>
+            </div>
+        </section>
+
+        <!-- ===================================================================== -->
+        <!-- DRUCK-ANSICHT (NUR BEIM DRUCKEN SICHTBAR) -->
+        <!-- ===================================================================== -->
+        <div class="print-only p-8 bg-white text-black space-y-8">
+            <div class="border-b-2 border-black pb-4 mb-6">
+                <h1 class="text-3xl font-black">SchlaganfallFit – Mein Reha-Trainingsplan</h1>
+                <p class="text-sm">Für meine behandelnde Ärztin / meinen Therapeuten</p>
+            </div>
+
+            <div class="print-card">
+                <h2 class="text-xl font-bold mb-3">Wochenplan zum handschriftlichen Abhacken</h2>
+                <div class="space-y-3">
+                    <div class="flex items-center"><span class="checkbox-box"></span> <strong>Montag:</strong> Arm & Hand (5 min) + Beine (5 min)</div>
+                    <div class="flex items-center"><span class="checkbox-box"></span> <strong>Dienstag:</strong> Gesicht & Sprechen (5 min) + Kopf-Training</div>
+                    <div class="flex items-center"><span class="checkbox-box"></span> <strong>Mittwoch:</strong> Arm & Hand (5 min) + Beine (5 min)</div>
+                    <div class="flex items-center"><span class="checkbox-box"></span> <strong>Donnerstag:</strong> Gesicht & Sprechen (5 min) + Spaziergang mit Halt</div>
+                    <div class="flex items-center"><span class="checkbox-box"></span> <strong>Freitag:</strong> Arm & Hand (5 min) + Beine (5 min)</div>
+                    <div class="flex items-center"><span class="checkbox-box"></span> <strong>Samstag:</strong> Kopf-Training + Bauchatmung</div>
+                    <div class="flex items-center"><span class="checkbox-box"></span> <strong>Sonntag:</strong> Ruhetag & Entspannung</div>
+                </div>
+            </div>
+
+            <div class="print-card">
+                <h2 class="text-xl font-bold mb-3">Auszug aus dem Reha-Tagebuch</h2>
+                <table class="w-full text-left text-sm">
+                    <thead>
+                        <tr class="border-b-2 border-black">
+                            <th class="p-2">Datum</th>
+                            <th class="p-2">Stimmung</th>
+                            <th class="p-2">Müdigkeit</th>
+                            <th class="p-2">Übungen</th>
+                            <th class="p-2">Notiz</th>
+                        </tr>
+                    </thead>
+                    <tbody id="diary-print-table">
+                        <!-- Dynamisch befüllt -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- ========================================================================= -->
+    <!-- FOOTER MIT MEDIZINISCHEM HAFTUNGSAUSSCHLUSS -->
+    <!-- ========================================================================= -->
+    <footer class="bg-white border-t border-slate-200 mt-12 py-8 text-center text-xs text-slate-500">
+        <div class="max-w-4xl mx-auto px-4 space-y-3">
+            <p class="font-bold text-slate-600 leading-relaxed">
+                ⚠️ Medizinischer Hinweis: Diese Web-App dient ausschließlich der Information und der unterstützenden Übung zu Hause. Sie ersetzt keinesfalls eine ärztliche Diagnostik oder Therapie durch Fachpersonal (Physio-, Ergo- oder Logotherapie). Besprechen Sie Ihre Übungen stets mit Ihrem Therapeuten.
+            </p>
+            <p>
+                SchlaganfallFit &bull; 100% Offline-Betrieb &bull; Keine Datenspeicherung in der Cloud &bull; Nach dem Vorbild von KnieVital
+            </p>
+        </div>
+    </footer>
+
+    <!-- ========================================================================= -->
+    <!-- MOBILE NAVIGATION (STICKY BOTTOM BAR) -->
+    <!-- ========================================================================= -->
+    <nav id="mobile-nav" class="lg:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur border-t-2 border-slate-200 z-30 px-2 py-1 shadow-lg">
+        <div class="grid grid-cols-5 gap-1 text-center">
+            <button onclick="app.switchTab('start')" data-tab="start" class="nav-tab-btn mobile-nav-btn btn-touch active flex flex-col items-center justify-center p-1 rounded-xl text-xs font-bold text-blue-600">
+                <span class="text-xl">🏠</span>
+                <span class="text-[11px] leading-tight mt-0.5">Start</span>
+            </button>
+            <button onclick="app.switchTab('arm-hand')" data-tab="arm-hand" class="nav-tab-btn mobile-nav-btn btn-touch flex flex-col items-center justify-center p-1 rounded-xl text-xs font-bold text-slate-600">
+                <span class="text-xl">✋</span>
+                <span class="text-[11px] leading-tight mt-0.5">Arm</span>
+            </button>
+            <button onclick="app.switchTab('legs-balance')" data-tab="legs-balance" class="nav-tab-btn mobile-nav-btn btn-touch flex flex-col items-center justify-center p-1 rounded-xl text-xs font-bold text-slate-600">
+                <span class="text-xl">🦵</span>
+                <span class="text-[11px] leading-tight mt-0.5">Beine</span>
+            </button>
+            <button onclick="app.switchTab('face-speech')" data-tab="face-speech" class="nav-tab-btn mobile-nav-btn btn-touch flex flex-col items-center justify-center p-1 rounded-xl text-xs font-bold text-slate-600">
+                <span class="text-xl">🗣️</span>
+                <span class="text-[11px] leading-tight mt-0.5">Sprechen</span>
+            </button>
+            <button onclick="app.switchTab('brain')" data-tab="brain" class="nav-tab-btn mobile-nav-btn btn-touch flex flex-col items-center justify-center p-1 rounded-xl text-xs font-bold text-slate-600">
+                <span class="text-xl">🧠</span>
+                <span class="text-[11px] leading-tight mt-0.5">Kopf</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- ========================================================================= -->
+    <!-- GEFÜHRTER ÜBUNGS-PLAYER (VOLLBILD MODAL) -->
+    <!-- ========================================================================= -->
+    <div id="exercise-player-modal" class="fixed inset-0 z-50 bg-slate-900/90 backdrop-blur-md hidden flex items-center justify-center p-4 sm:p-6" role="dialog" aria-modal="true">
+        <div class="bg-white rounded-3xl w-full max-w-2xl max-h-[92vh] overflow-y-auto p-6 sm:p-8 flex flex-col justify-between shadow-2xl border-4 border-blue-500">
+            
+            <!-- SCHRITT-ANSICHT -->
+            <div id="player-step-view" class="space-y-6">
+                <!-- Header mit Zählern & Schließen -->
+                <div class="flex items-center justify-between border-b pb-4">
+                    <div>
+                        <span id="player-counter" class="text-xs font-black uppercase tracking-wider text-blue-600 block">Übung 1 von 3</span>
+                        <h2 id="player-exercise-title" class="text-2xl sm:text-3xl font-black text-slate-900 leading-tight">Hand flach streichen</h2>
+                    </div>
+                    <button onclick="app.closeWorkout()" class="btn-touch p-3 rounded-2xl bg-slate-100 hover:bg-rose-100 text-slate-600 hover:text-rose-600 text-xl font-bold" title="Training beenden">
+                        ✕
+                    </button>
+                </div>
+
+                <!-- Großes Piktogramm -->
+                <div id="player-pictogram" class="pictogram-box">
+                    <!-- SVG per JS -->
+                </div>
+
+                <!-- Angehörigen-Tipp (wird eingeblendet im Begleitmodus) -->
+                <div id="player-caregiver-box" class="hidden p-4 rounded-2xl bg-purple-100 border-2 border-purple-300 text-purple-900 text-sm">
+                    <strong>💡 Für Angehörige:</strong> <span id="player-caregiver-text"></span>
+                </div>
+
+                <!-- Anweisung & Countdown nebeneinander -->
+                <div class="flex flex-col sm:flex-row items-center gap-6 bg-blue-50 p-6 rounded-3xl border border-blue-100">
+                    <!-- Runder Countdown -->
+                    <div class="relative w-32 h-32 flex-shrink-0 flex items-center justify-center">
+                        <svg class="w-full h-full" viewBox="0 0 120 120">
+                            <circle cx="60" cy="60" r="54" fill="none" stroke="#dbeafe" stroke-width="10" />
+                            <circle id="player-timer-progress" class="timer-circle" cx="60" cy="60" r="54" fill="none" stroke="#2563eb" stroke-width="10" stroke-linecap="round" />
+                        </svg>
+                        <span id="player-timer-text" class="absolute text-2xl font-black text-blue-900">5s</span>
+                    </div>
+
+                    <!-- Schritt-Text groß -->
+                    <div class="space-y-2 text-center sm:text-left flex-1">
+                        <span id="player-step-counter" class="text-xs font-black uppercase tracking-wider text-blue-600">Schritt 1 von 5</span>
+                        <p id="player-instruction-text" class="text-xl sm:text-2xl font-extrabold text-slate-900 leading-snug">
+                            Legen Sie die Hand flach auf den Tisch.
+                        </p>
+                        <button onclick="appAudio.speak(document.getElementById('player-instruction-text').textContent)" class="inline-flex items-center gap-1.5 text-xs font-bold text-blue-700 bg-white px-3 py-1.5 rounded-lg border border-blue-200 hover:bg-blue-100">
+                            🔊 Schritt vorlesen
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Sicherheitshinweis -->
+                <p id="player-safety-text" class="text-xs text-center text-slate-500 italic"></p>
+
+                <!-- 3 RIESIGE BEDIENKNÖPFE (Mindestens 64x64) -->
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-4 border-t">
+                    <button id="player-pause-btn" onclick="app.toggleWorkoutPause()" class="btn-touch h-16 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-base sm:text-lg font-black">
+                        ⏸ Pause
+                    </button>
+                    <button onclick="app.nextWorkoutStep()" class="btn-touch h-16 col-span-1 sm:col-span-2 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white text-lg sm:text-xl font-black shadow-lg shadow-blue-600/30">
+                        ✓ Weiter / Geschafft
+                    </button>
+                </div>
+            </div>
+
+            <!-- FEEDBACK-ANSICHT NACH JEDER ÜBUNG -->
+            <div id="player-feedback-view" class="hidden text-center space-y-6 py-6">
+                <span class="text-5xl block animate-bounce">👏</span>
+                <h3 class="text-2xl sm:text-3xl font-black text-slate-900">Sehr gut gemacht!</h3>
+                <p class="text-lg text-slate-600">Wie war diese Übung für Sie?</p>
+
+                <div class="grid grid-cols-3 gap-3 max-w-md mx-auto">
+                    <button onclick="app.submitExerciseFeedback('easy')" class="btn-touch flex-col gap-2 p-5 rounded-3xl border-4 border-emerald-200 bg-emerald-50 hover:bg-emerald-100 text-emerald-900 font-bold">
+                        <span class="text-4xl">😊</span>
+                        <span>Leicht</span>
+                    </button>
+                    <button onclick="app.submitExerciseFeedback('good')" class="btn-touch flex-col gap-2 p-5 rounded-3xl border-4 border-blue-200 bg-blue-50 hover:bg-blue-100 text-blue-900 font-bold">
+                        <span class="text-4xl">😐</span>
+                        <span>Passt</span>
+                    </button>
+                    <button onclick="app.submitExerciseFeedback('hard')" class="btn-touch flex-col gap-2 p-5 rounded-3xl border-4 border-amber-200 bg-amber-50 hover:bg-amber-100 text-amber-900 font-bold">
+                        <span class="text-4xl">😣</span>
+                        <span>Zu schwer</span>
+                    </button>
+                </div>
+                <p class="text-xs text-slate-400">Ihre Antwort hilft der App, beim nächsten Mal leichtere oder anspruchsvollere Varianten vorzuschlagen.</p>
+            </div>
+
+            <!-- ABSCHLUSS-BILD SCHIRM -->
+            <div id="player-summary-view" class="hidden text-center space-y-6 py-8">
+                <span class="text-6xl block">🏆</span>
+                <h3 class="text-3xl sm:text-4xl font-black text-slate-900">Großartige Leistung!</h3>
+                <p id="summary-completed-count" class="text-xl font-bold text-blue-700">3 Übungen erfolgreich abgeschlossen</p>
+                <p class="text-slate-600 max-w-md mx-auto text-base">
+                    Ihr Erfolg wurde automatisch in Ihr Reha-Tagebuch eingetragen. Gönnen Sie sich nun eine wohlverdiente Pause!
+                </p>
+
+                <button onclick="app.finishWorkoutSummary()" class="btn-touch px-10 py-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl text-xl font-black shadow-lg shadow-emerald-600/30">
+                    Fertig & Zurück zur Übersicht
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- ERSTEINRICHTUNG / ONBOARDING MODAL -->
+    <!-- ========================================================================= -->
+    <div id="onboarding-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md hidden flex items-center justify-center p-4 sm:p-6" role="dialog" aria-modal="true">
+        <div class="bg-white rounded-3xl w-full max-w-xl p-6 sm:p-10 shadow-2xl border-4 border-blue-600 space-y-6">
+            
+            <div class="flex items-center justify-between border-b pb-3">
+                <span id="onboarding-progress-text" class="text-xs font-black uppercase tracking-wider text-blue-600">Frage 1 von 4</span>
+                <button onclick="app.closeOnboardingModal()" class="text-slate-400 hover:text-slate-700 text-xl font-bold p-1">✕</button>
+            </div>
+
+            <!-- FRAGE 1: BETROFFENE SEITE -->
+            <div id="onboarding-step-1" class="space-y-5">
+                <h2 class="text-2xl sm:text-3xl font-black text-slate-900 leading-tight">
+                    Welche Körperseite ist hauptsächlich betroffen?
+                </h2>
+                <p class="text-sm text-slate-500">Wir passen alle Übungstexte an Ihre betroffene Seite an.</p>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <button onclick="app.setOnboardingSide('links')" class="btn-touch flex-col gap-2 p-5 rounded-3xl border-4 border-slate-200 hover:border-blue-600 hover:bg-blue-50 text-slate-800 font-extrabold text-lg">
+                        <span class="text-4xl">👈</span>
+                        <span>Links</span>
+                    </button>
+                    <button onclick="app.setOnboardingSide('rechts')" class="btn-touch flex-col gap-2 p-5 rounded-3xl border-4 border-slate-200 hover:border-blue-600 hover:bg-blue-50 text-slate-800 font-extrabold text-lg">
+                        <span class="text-4xl">👉</span>
+                        <span>Rechts</span>
+                    </button>
+                    <button onclick="app.setOnboardingSide('beide')" class="btn-touch flex-col gap-2 p-5 rounded-3xl border-4 border-slate-200 hover:border-blue-600 hover:bg-blue-50 text-slate-800 font-extrabold text-lg">
+                        <span class="text-4xl">👐</span>
+                        <span>Beide Seiten</span>
+                    </button>
+                    <button onclick="app.setOnboardingSide('unbekannt')" class="btn-touch flex-col gap-2 p-5 rounded-3xl border-4 border-slate-200 hover:border-blue-600 hover:bg-blue-50 text-slate-800 font-extrabold text-lg">
+                        <span class="text-4xl">❓</span>
+                        <span>Weiß nicht</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- FRAGE 2: STEHFÄHIGKEIT -->
+            <div id="onboarding-step-2" class="hidden space-y-5">
+                <h2 class="text-2xl sm:text-3xl font-black text-slate-900 leading-tight">
+                    Wie gut können Sie aktuell stehen?
+                </h2>
+                <p class="text-sm text-slate-500">Für Ihre Sicherheit: Bei Unsicherheit wählen wir nur Übungen im Sitzen.</p>
+
+                <div class="space-y-3">
+                    <button onclick="app.setOnboardingStanding(0)" class="w-full btn-touch justify-start gap-4 p-5 rounded-2xl border-4 border-slate-200 hover:border-blue-600 hover:bg-blue-50 text-left font-bold text-base sm:text-lg">
+                        <span class="text-3xl">🪑</span>
+                        <div>
+                            <strong class="block text-slate-900">Gar nicht – nur im Sitzen</strong>
+                            <span class="text-xs text-slate-500 font-normal">Alle Übungen finden sicher auf dem Stuhl statt.</span>
+                        </div>
+                    </button>
+                    <button onclick="app.setOnboardingStanding(1)" class="w-full btn-touch justify-start gap-4 p-5 rounded-2xl border-4 border-slate-200 hover:border-blue-600 hover:bg-blue-50 text-left font-bold text-base sm:text-lg">
+                        <span class="text-3xl">🤝</span>
+                        <div>
+                            <strong class="block text-slate-900">Mit Hilfe / Festhalten</strong>
+                            <span class="text-xs text-slate-500 font-normal">Stehen mit Festhalten an Stuhllehne oder Begleitperson.</span>
+                        </div>
+                    </button>
+                    <button onclick="app.setOnboardingStanding(2)" class="w-full btn-touch justify-start gap-4 p-5 rounded-2xl border-4 border-slate-200 hover:border-blue-600 hover:bg-blue-50 text-left font-bold text-base sm:text-lg">
+                        <span class="text-3xl">🧍</span>
+                        <div>
+                            <strong class="block text-slate-900">Sicher auf beiden Beinen</strong>
+                            <span class="text-xs text-slate-500 font-normal">Freies Stehen und Gleichgewichtsübungen möglich.</span>
+                        </div>
+                    </button>
+                </div>
+            </div>
+
+            <!-- FRAGE 3: ARM-BEWEGLICHKEIT -->
+            <div id="onboarding-step-3" class="hidden space-y-5">
+                <h2 class="text-2xl sm:text-3xl font-black text-slate-900 leading-tight">
+                    Wie gut können Sie den betroffenen Arm bewegen?
+                </h2>
+                <p class="text-sm text-slate-500">Wir wählen passende aktive oder geführte Übungen.</p>
+
+                <div class="space-y-3">
+                    <button onclick="app.setOnboardingArm(0)" class="w-full btn-touch justify-start gap-4 p-5 rounded-2xl border-4 border-slate-200 hover:border-blue-600 hover:bg-blue-50 text-left font-bold text-base sm:text-lg">
+                        <span class="text-3xl">🤲</span>
+                        <div>
+                            <strong class="block text-slate-900">Gar nicht (gelähmt)</strong>
+                            <span class="text-xs text-slate-500 font-normal">Geführte Bewegungen: Die gesunde Hand hilft der betroffenen Hand.</span>
+                        </div>
+                    </button>
+                    <button onclick="app.setOnboardingArm(1)" class="w-full btn-touch justify-start gap-4 p-5 rounded-2xl border-4 border-slate-200 hover:border-blue-600 hover:bg-blue-50 text-left font-bold text-base sm:text-lg">
+                        <span class="text-3xl">✋</span>
+                        <div>
+                            <strong class="block text-slate-900">Ein wenig</strong>
+                            <span class="text-xs text-slate-500 font-normal">Kann Finger oder Arm leicht heben und greifen.</span>
+                        </div>
+                    </button>
+                    <button onclick="app.setOnboardingArm(2)" class="w-full btn-touch justify-start gap-4 p-5 rounded-2xl border-4 border-slate-200 hover:border-blue-600 hover:bg-blue-50 text-left font-bold text-base sm:text-lg">
+                        <span class="text-3xl">💪</span>
+                        <div>
+                            <strong class="block text-slate-900">Gut beweglich</strong>
+                            <span class="text-xs text-slate-500 font-normal">Kräftigung und gezielte Feinmotorik.</span>
+                        </div>
+                    </button>
+                </div>
+            </div>
+
+            <!-- FRAGE 4: BEGLEITUNG -->
+            <div id="onboarding-step-4" class="hidden space-y-5">
+                <h2 class="text-2xl sm:text-3xl font-black text-slate-900 leading-tight">
+                    Üben Sie meist allein oder mit Begleitperson?
+                </h2>
+                <p class="text-sm text-slate-500">Wir schalten bei Bedarf praktische Unterstützungstipps frei.</p>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <button onclick="app.setOnboardingCaregiver('allein')" class="btn-touch flex-col gap-2 p-5 rounded-3xl border-4 border-slate-200 hover:border-blue-600 hover:bg-blue-50 text-slate-800 font-extrabold text-lg">
+                        <span class="text-4xl">👤</span>
+                        <span>Ich übe allein</span>
+                    </button>
+                    <button onclick="app.setOnboardingCaregiver('mit-begleitung')" class="btn-touch flex-col gap-2 p-5 rounded-3xl border-4 border-slate-200 hover:border-blue-600 hover:bg-blue-50 text-slate-800 font-extrabold text-lg">
+                        <span class="text-4xl">👥</span>
+                        <span>Mit Begleitung</span>
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- JAVASCRIPT-DATEIEN -->
+    <!-- ========================================================================= -->
+    <script src="js/audio.js"></script>
+    <script src="js/exercises.js"></script>
+    <script src="js/faq.js"></script>
+    <script src="js/app.js"></script>
+
+    <!-- Service Worker Registrierung für 100% Offline PWA -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js').catch(err => {
+                    console.log('Service Worker Registrierung Hinweis:', err);
+                });
+            });
+        }
+    </script>
+</body>
+</html>
